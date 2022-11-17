@@ -7,3 +7,18 @@
 .leaflet-container {
     background: #fff;
 }
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 600px;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 4px;
+}
+p {
+    font-size: 12px;
+}
