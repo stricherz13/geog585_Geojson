@@ -11,14 +11,14 @@ function init() {
     });
     tiles.addTo(map);
 
-    var gardenLayer;
+    var propertiesLayer;
     var pantryLayer;
 
     var selection;
     var selectedLayer;
 
     // define the styles for the garden layer (unselected and selected)
-    function gardenStyle(feature) {
+    function propertiesStyle(feature) {
         return {
             radius: 5,
             fillColor: "#ff7800",
@@ -29,7 +29,7 @@ function init() {
         };
     }
 
-    function gardenSelectedStyle(feature) {
+    function propertiesSelectedStyle(feature) {
         return {
             radius: 5,
             fillColor: "#00FFFB",
@@ -41,19 +41,19 @@ function init() {
     }
 
     // handle click events on garden features
-    function gardenOnEachFeature(feature, layer){
+    function propertiesOnEachFeature(feature, layer){
         layer.on({
             click: function(e) {
                 if (selection) {
                     resetStyles();
                 }
 
-                e.target.setStyle(gardenSelectedStyle());
+                e.target.setStyle(propertiesSelectedStyle());
                 selection = e.target;
-                selectedLayer = gardenLayer;
+                selectedLayer = propertiesLayer;
 
                 // Insert some HTML with the feature name
-                buildSummaryLabel(feature);
+                buildTable(feature);
 
                 L.DomEvent.stopPropagation(e); // stop click event from being propagated further
             }
@@ -61,17 +61,17 @@ function init() {
     }
 
     // add the gardens GeoJSON layer using the gardensData variable from gardens.js
-    var gardenLayer = new L.geoJSON(propertiesData,{
-        style: gardenStyle,
-        onEachFeature: gardenOnEachFeature,
+    var propertiesLayer = new L.geoJSON(propertiesData,{
+        style: propertiesStyle,
+        onEachFeature: propertiesOnEachFeature,
         pointToLayer: function (feature, latlng) {
-            return L.circleMarker(latlng, gardenStyle)
+            return L.circleMarker(latlng, propertiesStyle)
         }
     });
 
 
 
-    gardenLayer.addTo(map);
+    propertiesLayer.addTo(map);
 
     // handle clicks on the map that didn't hit a feature
     map.addEventListener('click', function(e) {
@@ -84,15 +84,23 @@ function init() {
 
     // function to set the old selected feature back to its original symbol. Used when the map or a feature is clicked.
     function resetStyles(){
-        if (selectedLayer === pantryLayer) selection.setIcon(pantriesIcon);
-        else if (selectedLayer === gardenLayer) selectedLayer.resetStyle(selection);
+        if (selectedLayer === propertiesLayer) selectedLayer.resetStyle(selection);
     }
 
-    // function to build the HTML for the summary label using the selected feature's "name" property
-    function buildSummaryLabel(currentFeature){
-        var featureName = currentFeature.properties.handle || "Unnamed feature";
-        document.getElementById('summaryLabel').innerHTML = '<p style="font-size:18px"><b>' + featureName + '</b></p>';
+    //function to build the HTML table with the attributes from the selected property
+    function buildTable(currentFeature){
+        let handle = currentFeature.properties.handle
+        document.getElementById("handle").innerHTML = '<p>' + handle + '</p>';
+        let address = currentFeature.properties.siteaddr
+        document.getElementById("address").innerHTML = '<p>' + address + '</p>';
+        let total = currentFeature.properties.user_total
+        document.getElementById("total").innerHTML = '<p>' + `$${total}` + '</p>';
+        let neighborhood = currentFeature.properties.neighborho
+        document.getElementById("neighborhood").innerHTML = '<p>' + neighborhood + '</p>';
+        let landuse = currentFeature.properties.landuse
+        document.getElementById("landuse").innerHTML = '<p>' + landuse + '</p>';
+        let zoning = currentFeature.properties.zoning
+        document.getElementById("zoning").innerHTML = '<p>' + zoning + '</p>';
     }
-
 }
 
